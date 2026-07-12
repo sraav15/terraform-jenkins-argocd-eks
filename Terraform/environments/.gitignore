@@ -1,0 +1,18 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform variables (contains values)
+terraform.tfvars
+
+# AWS keys
+*.pem
+
+# IDE
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
