@@ -30,3 +30,7 @@ variable "public_subnets" {
 variable "vpc_sg_id" {
   type = list(string)
 }
+
+variable "user_data" {
+   type = string
+  }

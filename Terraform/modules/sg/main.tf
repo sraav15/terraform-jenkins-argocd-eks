@@ -43,3 +43,11 @@ resource "aws_vpc_security_group_ingress_rule" "appsg_ssh" {
   to_port           = 22
   ip_protocol       = "tcp"
 }
+
+resource "aws_vpc_security_group_ingress_rule" "appsg_sonar" {
+  security_group_id = aws_security_group.appsg.id
+  cidr_ipv4         = var.cidr_ipv4_appsg
+  from_port         = 9000
+  ip_protocol       = "tcp"
+  to_port           = 9000
+}

@@ -69,20 +69,18 @@ variable "ami_id" {
 
 }
 
-variable "instance_type" {
-  description = "instance type"
-  type        = string
-}
+
 
 variable "key_name" {
   description = "key name"
   type        = string
 }
 
-variable "instance-name" {
-  description = "ec2 name"
-  
+
+
+variable "instances" {
+  type = map(object({
+    instance_type = string
+    user_data = string 
+  }))
 }
-
-
-
