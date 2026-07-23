@@ -23,6 +23,7 @@ pipeline {
         stage('Git Check') {
             steps {
                 sh '''
+                 git config --global --add safe.directory "/var/lib/jenkins/workspace/Ultimaate pipeline"
                     pwd
                     ls -la
                     git status
@@ -79,6 +80,7 @@ pipeline {
         stage('Update Deployment File') {
 
             environment {
+              
                 GIT_REPO_NAME = "terraform-jenkins-argocd-eks"
                 GIT_USER_NAME = "sraav15"
             }
@@ -87,6 +89,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
 
                     sh '''
+                        git config --global --add safe.directory "*"
                         git config user.email "sravanu09@gmail.com"
                         git config user.name "Sravan Kumar"
 
