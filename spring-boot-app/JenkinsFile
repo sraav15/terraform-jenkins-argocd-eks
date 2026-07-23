@@ -1,17 +1,31 @@
 pipeline {
+    options {
+      skipDefaultCheckout(true)
+  }
   agent {
     docker {
       image 'sraav15/jenkins-maven-java21-agent:v1'
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
+}
   stages {
     stage('Checkout') {
-      steps {
-        sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/sraav15/terraform-jenkins-argocd-eks.git'
-      }
+    steps {
+        git branch: 'main',
+            url: 'https://github.com/sraav15/terraform-jenkins-argocd-eks.git'
     }
+}
+  }
+stage('Git Check') {
+    steps {
+        sh '''
+        pwd
+        ls -la
+        git status
+        '''
+    }
+}
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
@@ -63,23 +77,26 @@ pipeline {
   }
 }
     stage('Update Deployment File') {
-        environment {
-            GIT_REPO_NAME = "terraform-jenkins-argocd-eks"
-            GIT_USER_NAME = "sraav15"
-        }
-        steps {
-            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                sh '''
-                    git config user.email "sravanu09@gmail.com"
-                    git config user.name "Sravan Kumar"
-                    BUILD_NUMBER=${BUILD_NUMBER}
-                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
-                    git add spring-boot-app-manifests/deployment.yml
-                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                '''
-            }
+    environment {
+        GIT_REPO_NAME = "terraform-jenkins-argocd-eks"
+        GIT_USER_NAME = "sraav15"
+    }
+
+    steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+
+            sh '''
+                git config user.email "sravanu09@gmail.com"
+                git config user.name "Sravan Kumar"
+
+                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+
+                git add spring-boot-app-manifests/deployment.yml
+
+                git commit -m "Update deployment image to version ${BUILD_NUMBER}" || echo "No changes to commit"
+
+                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+            '''
         }
     }
-  }
 }
