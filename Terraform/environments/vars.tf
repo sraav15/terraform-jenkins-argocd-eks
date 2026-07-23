@@ -84,3 +84,4 @@ variable "instances" {
     user_data = string 
   }))
 }
+

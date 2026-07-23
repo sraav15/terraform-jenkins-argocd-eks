@@ -14,5 +14,7 @@ module "ec2" {
 
     user_data = each.value.user_data
 
+iam_instance_profile = each.key == "jenkins" ? module.iam.jenkins_instance_profile : null
+
 }
 
